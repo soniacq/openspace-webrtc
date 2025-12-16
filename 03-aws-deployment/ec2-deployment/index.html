@@ -1,0 +1,1692 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://soniacq.github.io/openspace-webrtc/03-aws-deployment/ec2-deployment/">
+      
+      
+        <link rel="prev" href="../instance-requirements/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>EC2 Deployment - OpenSpace WebRTC Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#openspace-webrtc-on-aws-ec2" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="OpenSpace WebRTC Docs" class="md-header__button md-logo" aria-label="OpenSpace WebRTC Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            OpenSpace WebRTC Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              EC2 Deployment
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="OpenSpace WebRTC Docs" class="md-nav__button md-logo" aria-label="OpenSpace WebRTC Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    OpenSpace WebRTC Docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introduction
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Introduction
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../00-introduction/what-is-openspace-webrtc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What is OpenSpace WebRTC?
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../00-introduction/related-repositories/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Related Repositories
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-architecture/system-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment Options
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deployment Options
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-deployment-options/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-deployment-options/local-single-machine/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Local Single-Machine
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-deployment-options/cloud-aws-ec2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cloud (AWS EC2)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AWS Deployment
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AWS Deployment
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cost-and-scaling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost & Scaling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../instance-requirements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Instance Requirements
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EC2 Deployment
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EC2 Deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#a-ec2-machine-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. EC2 Machine Requirements
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#b-connecting-to-the-ec2-machine-remotely" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. Connecting to the EC2 Machine Remotely
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="B. Connecting to the EC2 Machine Remotely">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#windows-using-remote-desktop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Windows: Using Remote Desktop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mac-using-microsoft-remote-desktop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mac: Using Microsoft Remote Desktop
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#c-enable-remote-procedure-call-rpc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. Enable Remote Procedure Call (RPC)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#d-install-required-software" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. Install Required Software
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#e-aws-cli-setup-powershell" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        E. AWS CLI Setup (PowerShell)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#f-install-nvidia-drivers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F. Install NVIDIA Drivers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#g-nvidia-control-panel-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        G. NVIDIA Control Panel Settings
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#h-aws-instance-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        H. AWS Instance Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="H. AWS Instance Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#h1-permanent-ip-elastic-ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        H1. Permanent IP (Elastic IP)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#h2-inbound-rules-for-public-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        H2. Inbound Rules for Public Access
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#i-setup-multiple-openspace-instances" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        I. Setup Multiple OpenSpace Instances
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#j-running-openspace-webrtc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        J. Running OpenSpace WebRTC
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="J. Running OpenSpace WebRTC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-start-supervisor-web-gui-signaling-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Start Supervisor (Web GUI + Signaling Server)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-start-backend-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Start Backend Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-start-frontend-ui-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Start Frontend UI Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#k-secure-vs-non-secure-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        K. Secure vs. Non-Secure Mode
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="K. Secure vs. Non-Secure Mode">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#secure-mode-ec2-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Secure Mode (EC2 Access)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#non-secure-mode-local-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Non-Secure Mode (Local / Testing)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#demo-video" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Demo Video
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#l-additional-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        L. Additional Resources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#known-issue-ec2-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚠️ Known Issue (EC2 Deployment)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../appendix" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Appendix
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#a-ec2-machine-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. EC2 Machine Requirements
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#b-connecting-to-the-ec2-machine-remotely" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. Connecting to the EC2 Machine Remotely
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="B. Connecting to the EC2 Machine Remotely">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#windows-using-remote-desktop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Windows: Using Remote Desktop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mac-using-microsoft-remote-desktop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mac: Using Microsoft Remote Desktop
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#c-enable-remote-procedure-call-rpc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. Enable Remote Procedure Call (RPC)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#d-install-required-software" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. Install Required Software
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#e-aws-cli-setup-powershell" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        E. AWS CLI Setup (PowerShell)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#f-install-nvidia-drivers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F. Install NVIDIA Drivers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#g-nvidia-control-panel-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        G. NVIDIA Control Panel Settings
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#h-aws-instance-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        H. AWS Instance Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="H. AWS Instance Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#h1-permanent-ip-elastic-ip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        H1. Permanent IP (Elastic IP)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#h2-inbound-rules-for-public-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        H2. Inbound Rules for Public Access
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#i-setup-multiple-openspace-instances" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        I. Setup Multiple OpenSpace Instances
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#j-running-openspace-webrtc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        J. Running OpenSpace WebRTC
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="J. Running OpenSpace WebRTC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-start-supervisor-web-gui-signaling-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Start Supervisor (Web GUI + Signaling Server)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-start-backend-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Start Backend Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-start-frontend-ui-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Start Frontend UI Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#k-secure-vs-non-secure-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        K. Secure vs. Non-Secure Mode
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="K. Secure vs. Non-Secure Mode">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#secure-mode-ec2-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Secure Mode (EC2 Access)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#non-secure-mode-local-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Non-Secure Mode (Local / Testing)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#demo-video" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Demo Video
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#l-additional-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        L. Additional Resources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#known-issue-ec2-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚠️ Known Issue (EC2 Deployment)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="openspace-webrtc-on-aws-ec2">OpenSpace WebRTC on AWS EC2</h1>
+<p>This guide explains how to set up OpenSpace WebRTC on an AWS EC2 instance with Windows. It covers installing dependencies, configuring the environment, and running the application in both secure and non-secure modes. Following this tutorial ensures that your EC2 instance is correctly configured for GPU-accelerated OpenSpace rendering.</p>
+<hr />
+<h2 id="a-ec2-machine-requirements">A. EC2 Machine Requirements</h2>
+<p>To run OpenSpace WebRTC smoothly in the cloud, we recommend using a GPU-enabled instance.<br />
+- <strong>Instance Type:</strong> G4dn.xlarge with Tesla T4 GPU<br />
+- <strong>AWS Minimum Requirements:</strong> See <a href="https://docs.google.com/document/d/1ou6ybwM5k764UGQGp1RoJcXfgEhIaRNMTvxDZx58NBo/edit?usp=sharing">OpenSpace WebRTC Cloud Requirements</a></p>
+<blockquote>
+<p><strong>Note:</strong> Using the right instance ensures that multiple OpenSpace instances can run concurrently without performance degradation.</p>
+</blockquote>
+<hr />
+<h2 id="b-connecting-to-the-ec2-machine-remotely">B. Connecting to the EC2 Machine Remotely</h2>
+<p>OpenSpace WebRTC requires a Windows environment. You can connect to your EC2 instance using Remote Desktop.</p>
+<h3 id="windows-using-remote-desktop">Windows: Using Remote Desktop</h3>
+<ol>
+<li>Log in to the AWS EC2 Console as the root user.</li>
+<li>Navigate to EC2 Dashboard → Select your Windows instance.</li>
+<li>Retrieve the Administrator password:</li>
+<li>Instance state → Start instance → Connect → RDP Client tab → Get Password</li>
+<li>Upload <code>.pem</code> key to decrypt and get the password</li>
+<li>Open Remote Desktop Connection (<code>Win + R</code> → <code>mstsc</code>).</li>
+<li>Enter the public IP/DNS of your EC2 instance → Connect.</li>
+<li>Login:</li>
+<li><strong>Username:</strong> Administrator  </li>
+<li><strong>Password:</strong> Use the decrypted password  </li>
+<li>Accept certificate warning if prompted.</li>
+</ol>
+<h3 id="mac-using-microsoft-remote-desktop">Mac: Using Microsoft Remote Desktop</h3>
+<ol>
+<li>Install Microsoft Remote Desktop: <a href="https://apps.apple.com/us/app/microsoft-remote-desktop/id1295203466">Mac App Store</a></li>
+<li>Retrieve EC2 Administrator password as above.</li>
+<li>Add a new PC in the Remote Desktop app:</li>
+<li>Click <code>+</code> → Add PC → Enter public IP/DNS</li>
+<li>Use "Administrator" and the decrypted password</li>
+<li>Connect:</li>
+<li>Double-click the PC entry</li>
+<li>Accept certificate if prompted</li>
+</ol>
+<blockquote>
+<p><strong>Explanation:</strong> Remote Desktop is required to manage the EC2 instance as if you were sitting in front of a physical Windows machine. This step is essential for installing software, configuring NVIDIA drivers, and running OpenSpace WebRTC.</p>
+</blockquote>
+<hr />
+<h2 id="c-enable-remote-procedure-call-rpc">C. Enable Remote Procedure Call (RPC)</h2>
+<p>Windows uses RPC to allow different programs to communicate, including over the network.</p>
+<ol>
+<li>Press <code>WIN + R</code> → <code>services.msc</code></li>
+<li>Locate <code>Remote Procedure Call (RPC)</code></li>
+<li>Ensure:</li>
+<li>Status: Running</li>
+<li>Startup Type: Automatic</li>
+</ol>
+<blockquote>
+<p><strong>Explanation:</strong> Enabling RPC ensures that Remote Desktop and other inter-process communication works reliably.</p>
+</blockquote>
+<hr />
+<h2 id="d-install-required-software">D. Install Required Software</h2>
+<p>Install the following tools to ensure the EC2 instance can build, run, and manage OpenSpace WebRTC:</p>
+<ul>
+<li>Git Bash: https://git-scm.com/downloads  </li>
+<li>CMake &gt;= 3.31: https://cmake.org/download/  </li>
+<li>VS Code: https://code.visualstudio.com/  </li>
+<li>Visual Studio (C++ Make Tools module): https://visualstudio.microsoft.com/  </li>
+<li>Python (latest stable): https://www.python.org/downloads/<br />
+<em>(Ensure "Add Python to PATH" is checked)</em>  </li>
+<li>Node.js: https://nodejs.org/en/download/  </li>
+<li>PostgreSQL &gt;=13: https://www.postgresql.org/download/  </li>
+<li>DBeaver (PostgreSQL GUI): https://dbeaver.io/download/  </li>
+<li>Qt 6.6.3 (MSVC build): https://www.qt.io/download-qt-installer</li>
+</ul>
+<blockquote>
+<p><strong>Explanation:</strong> These dependencies are required to build, run, and maintain both the backend and frontend components of OpenSpace WebRTC on Windows.</p>
+</blockquote>
+<hr />
+<h2 id="e-aws-cli-setup-powershell">E. AWS CLI Setup (PowerShell)</h2>
+<p>AWS CLI allows you to manage your EC2 instance, S3 buckets, and other AWS services from PowerShell.</p>
+<ol>
+<li><strong>Install AWS CLI</strong></li>
+</ol>
+<pre><code class="language-powershell">aws --version
+# If not installed:
+msiexec.exe /i https://awscli.amazonaws.com/AWSCLIV2.msi
+</code></pre>
+<p>Restart PowerShell.</p>
+<ol>
+<li><strong>Configure AWS Credentials</strong></li>
+</ol>
+<pre><code class="language-powershell">aws configure
+# Input IAM Access Key, Secret Key, default region (e.g., us-east-1), output json
+</code></pre>
+<p>Verify: <code>Get-Content ~/.aws/credentials</code></p>
+<blockquote>
+<p><strong>Explanation:</strong> AWS CLI is used later for managing NVIDIA driver installation and automation tasks.</p>
+</blockquote>
+<hr />
+<h2 id="f-install-nvidia-drivers">F. Install NVIDIA Drivers</h2>
+<p>Use AWS-provided NVIDIA drivers for your GPU. Do not download from NVIDIA website.</p>
+<pre><code class="language-powershell">$Bucket = &quot;ec2-windows-nvidia-drivers&quot;
+$KeyPrefix = &quot;latest&quot;
+$LocalPath = &quot;$home\Desktop\NVIDIA&quot;
+$Objects = Get-S3Object -BucketName $Bucket -KeyPrefix $KeyPrefix -Region us-east-1
+foreach ($Object in $Objects) {
+    $LocalFileName = $Object.Key
+    if ($LocalFileName -ne '' -and $Object.Size -ne 0) {
+        $LocalFilePath = Join-Path $LocalPath $LocalFileName
+        Copy-S3Object -BucketName $Bucket -Key $Object.Key -LocalFile $LocalFilePath -Region us-east-1
+    }
+}
+</code></pre>
+<p>Install manually after download.</p>
+<blockquote>
+<p><strong>Explanation:</strong> Proper NVIDIA drivers are needed to run OpenGL and enable hardware-accelerated rendering for OpenSpace streaming.</p>
+</blockquote>
+<hr />
+<h2 id="g-nvidia-control-panel-settings">G. NVIDIA Control Panel Settings</h2>
+<p>Right-click desktop → Open NVIDIA Control Panel.</p>
+<p><strong>Manage 3D Settings:</strong></p>
+<ul>
+<li>
+<p>OpenGL Rendering GPU: NVIDIA RTX A10G</p>
+</li>
+<li>
+<p>Power Management Mode: Prefer Maximum Performance</p>
+</li>
+</ul>
+<blockquote>
+<p><strong>Explanation:</strong> Ensures OpenSpace uses the GPU correctly for streaming and graphics.</p>
+</blockquote>
+<hr />
+<h2 id="h-aws-instance-configuration">H. AWS Instance Configuration</h2>
+<h3 id="h1-permanent-ip-elastic-ip">H1. Permanent IP (Elastic IP)</h3>
+<ul>
+<li>
+<p>Allocate Elastic IP → Associate with your EC2 instance</p>
+</li>
+<li>
+<p>Update Security Groups to allow HTTP/HTTPS traffic</p>
+</li>
+</ul>
+<blockquote>
+<p><strong>Explanation:</strong> Ensures the instance keeps a consistent IP even after restarts, which is required for users to reliably access OpenSpace.</p>
+</blockquote>
+<h3 id="h2-inbound-rules-for-public-access">H2. Inbound Rules for Public Access</h3>
+<ul>
+<li>
+<p>Configure Security Group to allow traffic (HTTP, HTTPS, SSH)</p>
+</li>
+<li>
+<p>Save changes</p>
+</li>
+</ul>
+<blockquote>
+<p><strong>Explanation:</strong> Without proper inbound rules, users cannot access OpenSpace from outside AWS.</p>
+</blockquote>
+<hr />
+<h2 id="i-setup-multiple-openspace-instances">I. Setup Multiple OpenSpace Instances</h2>
+<ul>
+<li>
+<p>Set OPENSPACE_SYNC folder (e.g., <code>c:\Users\..\OpenSpace\sync</code>)</p>
+</li>
+<li>
+<p>Run <code>add_rendering_instance.py</code></p>
+</li>
+<li>
+<p>More details: OpenSpace-Web-Backend</p>
+</li>
+</ul>
+<blockquote>
+<p><strong>Explanation:</strong> Multiple instances allow different users or sessions to run independently on the same EC2 machine.</p>
+</blockquote>
+<hr />
+<h2 id="j-running-openspace-webrtc">J. Running OpenSpace WebRTC</h2>
+<h3 id="1-start-supervisor-web-gui-signaling-server">1. Start Supervisor (Web GUI + Signaling Server)</h3>
+<pre><code class="language-bash">cd /c/webrtc/OpenSpace-Web-Backend
+python supervisor.py
+</code></pre>
+<h3 id="2-start-backend-server">2. Start Backend Server</h3>
+<pre><code class="language-bash">cd /c/webrtc/Backend-WebRTC/
+npm start
+</code></pre>
+<h3 id="3-start-frontend-ui-server">3. Start Frontend UI Server</h3>
+<pre><code class="language-bash">cd /c/webrtc/UI-WebRTC/
+npm start
+</code></pre>
+<p><strong>Start Instance via UI:</strong> Click Join Instance button in the browser.</p>
+<blockquote>
+<p><strong>Explanation:</strong> Supervisor orchestrates all services; backend handles signaling and data, frontend provides the user interface.</p>
+</blockquote>
+<hr />
+<h2 id="k-secure-vs-non-secure-mode">K. Secure vs. Non-Secure Mode</h2>
+<h3 id="secure-mode-ec2-access">Secure Mode (EC2 Access)</h3>
+<ol>
+<li>Update API in <code>api.js</code>:</li>
+</ol>
+<pre><code class="language-javascript">export default openspaceApi(Environment.wsAddress, Environment.wsPort, true);
+</code></pre>
+<ol>
+<li>
+<p>Enable secure section in <code>.env</code></p>
+</li>
+<li>
+<p>Run proxy &amp; Caddy servers:</p>
+</li>
+</ol>
+<pre><code class="language-bash">cd /c/webrtc/OpenSpace-Web-Backend/secure_deployment/
+python proxy.py
+
+cd /c/Caddy/
+./caddy_windows_amd64.exe run
+</code></pre>
+<ol>
+<li>Access via: <code>https://openspaceweb.com/frontend/#/streaming?id=0</code></li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>Note on Domain Name</strong></p>
+<p>The URL <code>https://openspaceweb.com/</code> shown in these instructions was a domain purchased and used by the OpenSpace WebRTC project at the time of writing.<br />
+When deploying your own EC2 instance, you should replace this with a domain that you own.<br />
+In AWS, you can easily register or associate a domain with your EC2 instance using <strong>Route 53</strong>.<br />
+After updating your domain, make sure to also update the corresponding <code>Environment.js</code> configuration in the Frontend repository.<br />
+For reference, see how this was done in this commit: <a href="https://github.com/OpenSpace/OpenSpace-WebGuiFrontend/commit/ddde0bc2bc8a05e50500c7f873926399f3d06988">update domain in Environment.js</a></p>
+</blockquote>
+<h3 id="non-secure-mode-local-testing">Non-Secure Mode (Local / Testing)</h3>
+<ol>
+<li>Update API in <code>api.js</code>:</li>
+</ol>
+<pre><code class="language-javascript">export default openspaceApi(Environment.wsAddress, Environment.wsPort, false);
+</code></pre>
+<ol>
+<li>Start instance:</li>
+</ol>
+<pre><code class="language-bash">cd /c/webrtc/OpenSpace-Web-Backend/testing
+python start.py
+</code></pre>
+<ol>
+<li>
+<p>Access via browser:</p>
+</li>
+<li>
+<p>Local: <code>http://localhost:4690/frontend/#/streaming?id=0</code></p>
+</li>
+<li>
+<p>Other machines: add IP to <code>chrome://flags</code></p>
+</li>
+</ol>
+<hr />
+<h2 id="demo-video">Demo Video</h2>
+<p>To see OpenSpace WebRTC in action on an AWS EC2 instance, watch the following demo videos:</p>
+<ul>
+<li><strong>Non-secure connection</strong> (inside the same machine, same network):<br />
+  This demo shows the OpenSpace instance running on the EC2 Windows server and accessed locally within the same network.<br />
+<a href="https://www.youtube.com/watch?v=lCfv9l-rLxg&amp;start=0&amp;end=304"><img alt="Non-secure OpenSpace WebRTC demo" src="https://img.youtube.com/vi/lCfv9l-rLxg/1.jpg" /></a></li>
+</ul>
+<!-- <iframe width="560" height="315" src="https://www.youtube.com/embed/lCfv9l-rLxg?start=126&end=304" title="Non-secure OpenSpace WebRTC demo" frameborder="0" allowfullscreen></iframe> -->
+
+<ul>
+<li><strong>Secure connection</strong> (Rendering server running on AWS instance, client accessing from outside the network):<br />
+  This demo shows a secure deployment where the OpenSpace instance is hosted on EC2 and accessed remotely from a different network using HTTPS.<br />
+  <!-- <iframe width="560" height="315" src="https://www.youtube.com/embed/lCfv9l-rLxg?start=441" title="Secure OpenSpace WebRTC demo" frameborder="0" allowfullscreen></iframe> --></li>
+</ul>
+<p><a href="https://www.youtube.com/watch?v=lCfv9l-rLxg&amp;start=441"><img alt="Secure OpenSpace WebRTC demo" src="https://img.youtube.com/vi/lCfv9l-rLxg/2.jpg" /></a></p>
+<hr />
+<h2 id="l-additional-resources">L. Additional Resources</h2>
+<ul>
+<li>
+<p><a href="https://github.com/OpenSpace/OpenSpace-Web-Backend">OpenSpace-Web-Backend</a></p>
+</li>
+<li>
+<p><a href="https://github.com/OpenSpace/Backend-WebRTC">Backend-WebRTC</a></p>
+</li>
+<li>
+<p><a href="https://github.com/OpenSpace/UI-WebRTC">UI-WebRTC</a></p>
+</li>
+</ul>
+<hr />
+<h2 id="known-issue-ec2-deployment">⚠️ Known Issue (EC2 Deployment)</h2>
+<p>In some EC2 configurations, WebRTC video streaming may fail to render in the browser, even though user interaction and API communication remain functional. This is a known limitation and is left as future work.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>
