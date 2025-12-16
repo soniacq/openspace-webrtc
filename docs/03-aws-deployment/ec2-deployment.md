@@ -204,6 +204,14 @@ cd /c/Caddy/
 
 4. Access via: `https://openspaceweb.com/frontend/#/streaming?id=0`
 
+> ⚠️ **Note on Domain Name**
+>
+> The URL `https://openspaceweb.com/` shown in these instructions was a domain purchased and used by the OpenSpace WebRTC project at the time of writing.  
+> When deploying your own EC2 instance, you should replace this with a domain that you own.  
+> In AWS, you can easily register or associate a domain with your EC2 instance using **Route 53**.  
+> After updating your domain, make sure to also update the corresponding `Environment.js` configuration in the Frontend repository.  
+> For reference, see how this was done in this commit: [update domain in Environment.js](https://github.com/OpenSpace/OpenSpace-WebGuiFrontend/commit/ddde0bc2bc8a05e50500c7f873926399f3d06988)
+
 ### Non-Secure Mode (Local / Testing)
 1. Update API in `api.js`:
 ```javascript
@@ -225,11 +233,11 @@ python start.py
 ---
 
 ## L. Additional Resources
-- OpenSpace-Web-Backend
+- [OpenSpace-Web-Backend](https://github.com/OpenSpace/OpenSpace-Web-Backend)
 
-- Backend-WebRTC
+- [Backend-WebRTC](https://github.com/OpenSpace/Backend-WebRTC)
 
-- UI-WebRTC
+- [UI-WebRTC](https://github.com/OpenSpace/UI-WebRTC)
 
 ---
 
