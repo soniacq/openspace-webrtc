@@ -26,19 +26,23 @@ OpenSpace WebRTC can be deployed in multiple ways:
 
 - **Local (Single Machine)**  
   OpenSpace and the WebRTC stack run on the same computer and are
-  accessed via a web browser (local or LAN).
+  accessed via a web browser (local or LAN).  
+  [See Local Deployment Instructions](docs/02-deployment-options/local-single-machine.md)
 
 - **Cloud (AWS EC2)**  
   OpenSpace runs on a GPU-enabled EC2 instance and streams to
-  remote browsers over the internet.
+  remote browsers over the internet.  
+  [See AWS Deployment Overview](docs/03-aws-deployment/overview.md)  
 
-## Documentation Structure
+  Key AWS Docs:  
+  - [Cost & Scaling](docs/03-aws-deployment/cost-and-scaling.md)  
+  - [Instance Requirements](docs/03-aws-deployment/instance-requirements.md)  
+  - [Full EC2 Deployment Tutorial](docs/03-aws-deployment/ec2-deployment.md)  
 
-- `docs/00-introduction` — Overview, goals, and related repositories
-- `docs/01-architecture` — System components and communication flow
-- `docs/02-deployment-options` — Local and cloud deployment patterns
-- `docs/03-aws-deployment` — AWS-specific requirements and scaling
-- `docs/appendix` — Reference material and external links
+## System Architecture
+Learn about OpenSpace WebRTC architecture and communication flow:  
+[System Architecture](docs/01-architecture/system-architecture.md)  
+![Architecture Diagram](docs/01-architecture/images/openspace_webrtc-architecture_unsecure.png)  
 
 ## Related Repositories
 
@@ -47,6 +51,10 @@ instructions of the OpenSpace WebRTC components. Instead, it
 provides system-level documentation and deployment guidance.
 
 Core components:
-- https://github.com/OpenSpace/OpenSpace-Web-Backend
-- https://github.com/OpenSpace/Backend-WebRTC
-- https://github.com/OpenSpace/UI-WebRTC
+- [OpenSpace-Web-Backend](https://github.com/OpenSpace/OpenSpace-Web-Backend)
+- [Backend-WebRTC](https://github.com/OpenSpace/Backend-WebRTC)
+- [UI-WebRTC](https://github.com/OpenSpace/UI-WebRTC)
+
+## Appendix
+Reference material, external links, and additional resources:  
+[Appendix](docs/appendix)
