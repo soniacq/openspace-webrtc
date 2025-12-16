@@ -232,6 +232,24 @@ python start.py
 
 ---
 
+## Demo Video
+
+To see OpenSpace WebRTC in action on an AWS EC2 instance, watch the following demo videos:
+
+- **Non-secure connection** (inside the same machine, same network):  
+  This demo shows the OpenSpace instance running on the EC2 Windows server and accessed locally within the same network.  
+  [![Non-secure OpenSpace WebRTC demo](https://img.youtube.com/vi/lCfv9l-rLxg/1.jpg)](https://www.youtube.com/watch?v=lCfv9l-rLxg&start=0&end=304)
+
+  <!-- <iframe width="560" height="315" src="https://www.youtube.com/embed/lCfv9l-rLxg?start=126&end=304" title="Non-secure OpenSpace WebRTC demo" frameborder="0" allowfullscreen></iframe> -->
+
+- **Secure connection** (Rendering server running on AWS instance, client accessing from outside the network):  
+  This demo shows a secure deployment where the OpenSpace instance is hosted on EC2 and accessed remotely from a different network using HTTPS.  
+  <!-- <iframe width="560" height="315" src="https://www.youtube.com/embed/lCfv9l-rLxg?start=441" title="Secure OpenSpace WebRTC demo" frameborder="0" allowfullscreen></iframe> -->
+  [![Secure OpenSpace WebRTC demo](https://img.youtube.com/vi/lCfv9l-rLxg/2.jpg)](https://www.youtube.com/watch?v=lCfv9l-rLxg&start=441)
+
+
+---
+
 ## L. Additional Resources
 - [OpenSpace-Web-Backend](https://github.com/OpenSpace/OpenSpace-Web-Backend)
 
